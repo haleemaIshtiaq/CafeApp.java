@@ -21,9 +21,44 @@ double[] price = {25.0, 35.0, 40.0, 30.0, 55.0};
         }
         IO.println("================================");
     }
+
+    public void takeOrder(){
+        int itemNumber = Integer.parseInt(IO.readln("Enter item number (1-5): "));
+        if(itemNumber<0 || itemNumber>5){
+            IO.println("THis number is not in the list");
+        }
+        else {
+            int quantity = Integer.parseInt(IO.readln("How many? "));
+            double unitPrice= price[itemNumber-1];
+            double subTotal = unitPrice*quantity;
+            IO.println("Subtotal: " +subTotal +" SEK");
+            String loyalty = IO.readln("Loyalty member? (yes/no): ");
+            if(loyalty.equalsIgnoreCase("yes")||loyalty.equalsIgnoreCase("no")){
+                double discount=calculateDiscount(subTotal, loyalty);
+                double totalAfterDiscount = subTotal - discount;
+                IO.println(discount);
+                IO.println(totalAfterDiscount);
+            }
+            else{
+                IO.println("Invalid Input!");
+            }
+        }
+    }
+    public double calculateDiscount(double subTotal, String loyalty){
+        if (loyalty.equalsIgnoreCase("yes")) {
+            return subTotal * 0.15;
+        }
+        else if(subTotal>150){
+            return subTotal * 0.10;
+        }
+        else{
+            return 0;
+        }
+    }
      void main() {
 
      String name = Main.greetCustomer()    ;
      showMenu();
+     takeOrder();
     }
 }
