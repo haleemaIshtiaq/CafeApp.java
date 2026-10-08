@@ -27,30 +27,50 @@ double[] price = {25.0, 35.0, 40.0, 30.0, 55.0};
 
 
     public void takeOrder( String name){
-        int itemNumber = Integer.parseInt(IO.readln("Enter item number (1-5): "));
-        if(itemNumber<0 || itemNumber>5){
-            IO.println("THis number is not in the list");
+        int itemNumber = readInteger("Enter item number (1-5): ");
+        while(itemNumber<0 || itemNumber>5){
+            IO.println("This number is not in the list");
+            itemNumber = readInteger("Enter item number (1-5): ");
         }
-        else {
-            int quantity = Integer.parseInt(IO.readln("How many? "));
-            double unitPrice= price[itemNumber-1];
-            double subTotal = unitPrice*quantity;
-            IO.println("Subtotal: " +subTotal +" SEK");
-            String loyalty = IO.readln("Loyalty member? (yes/no): ");
-            if(loyalty.equalsIgnoreCase("yes")||loyalty.equalsIgnoreCase("no")){
-                double discount=calculateDiscount(subTotal, loyalty);
-                double vat = calculateVAT(subTotal,discount);
-                double total = subTotal - discount + vat;
-                IO.println(discount);
-                IO.println(total);
-                printReceipt(name,items[itemNumber-1], quantity, subTotal, discount, vat, total);
-
+       // else {
+            int quantity = readInteger("How many? ");
+            while(quantity<=0){
+                IO.println("Quantity must be greater than zero. Try again");
+                quantity = readInteger("How many? ");
             }
-            else{
-                IO.println("Invalid Input!");
+            //else {
+                double unitPrice = price[itemNumber - 1];
+                double subTotal = unitPrice * quantity;
+                //IO.println("Subtotal: " +subTotal +" SEK");
+                String loyalty = IO.readln("Loyalty member? (yes/no): ");
+                if (loyalty.equalsIgnoreCase("yes") || loyalty.equalsIgnoreCase("no")) {
+                    double discount = calculateDiscount(subTotal, loyalty);
+                    double vat = calculateVAT(subTotal, discount);
+                    double total = subTotal - discount + vat;
+                    // IO.println(discount);
+                    //IO.println(total);
+                    printReceipt(name, items[itemNumber - 1], quantity, subTotal, discount, vat, total);
+
+
+                } else {
+                    IO.println("Invalid Input!");
+                }
+           // }
+        //}
+    }
+
+    public int readInteger(String message){
+        while(true){
+            try{
+                int number = Integer.parseInt(IO.readln(message));
+                return number;
+            }
+            catch (NumberFormatException e){
+                IO.println("Invalid Input! Try again");
             }
         }
     }
+
 
     public double calculateDiscount(double subTotal, String loyalty){
         if (loyalty.equalsIgnoreCase("yes")) {
