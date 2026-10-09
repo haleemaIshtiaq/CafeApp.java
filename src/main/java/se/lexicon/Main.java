@@ -11,6 +11,10 @@ public class Main {
 
     public static String greetCustomer() {
         String name = IO.readln("Welcome! What is your name?");
+        while(name.isEmpty()){
+            IO.println("write your name");
+            name = IO.readln("Welcome! What is your name?");
+        }
         IO.println("Hi " + name + " ! Here is our menu:");
         return name;
     }
@@ -45,21 +49,16 @@ public class Main {
         double subTotal = unitPrice * quantity;
         //IO.println("Subtotal: " +subTotal +" SEK");
         String loyalty = IO.readln("Loyalty member? (yes/no): ");
-        if (loyalty.equalsIgnoreCase("yes") || loyalty.equalsIgnoreCase("no")) {
-            double discount = calculateDiscount(subTotal, loyalty);
-            double vat = calculateVAT(subTotal, discount);
-            double total = subTotal - discount + vat;
-            // IO.println(discount);
-            //IO.println(total);
-            printReceipt(name, items[itemNumber - 1], quantity, subTotal, discount, vat, total);
-            return total;
-
-        } else {
-            IO.println("Invalid Input!");
-            return 0;
+        while (!(loyalty.equalsIgnoreCase("yes")) && !(loyalty.equalsIgnoreCase("no"))) {
+            IO.println("Invalid Input ! Kindly enter yes or no");
+            loyalty = IO.readln("Loyalty member? (yes/no): ");
         }
-        // }
-        //}
+        double discount = calculateDiscount(subTotal, loyalty);
+        double vat = calculateVAT(subTotal, discount);
+        double total = subTotal - discount + vat;
+        printReceipt(name, items[itemNumber - 1], quantity, subTotal, discount, vat, total);
+        return total;
+
     }
 
     public int readInteger(String message) {
