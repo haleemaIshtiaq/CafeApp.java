@@ -1,19 +1,24 @@
 package se.lexicon;
-
+import java.util.ArrayList;
 public class Order {
+    ArrayList<LineItem> items = new ArrayList<>();
     String name;
-    String itemName;
-    int quantity;
-    double unitPrice;
     String loyalty;
-
     double subTotal;
     double discount;
     double vat;
     double total;
 
+    public void addItem(LineItem item){
+        items.add(item);
+    }
+
     public void calculateSubTotal() {
-         subTotal = unitPrice * quantity;
+         subTotal = 0;
+         for(LineItem item : items){
+             subTotal +=item.lineTotal();
+         }
+
     }
 
     public void calculateDiscount() {
@@ -40,8 +45,15 @@ public class Order {
         IO.println("        Lexicon Cafe");
         IO.println("================================");
         IO.println(String.format("%-10s : %s", "Customer", name));
-        IO.println(String.format("%-10s : %s x %d", "Item", itemName, quantity));
-        IO.println(String.format("%-10s : %.2f SEK", "Subtotal", subTotal));
+        IO.println("--------------------------------");
+
+        for(LineItem item : items){
+            IO.println(String.format(" %-17s x%-3d %6.2f SEK", item.itemName, item.quantity,item.lineTotal() ));
+        }
+        IO.println("--------------------------------");
+
+       IO.println(String.format("%-10s : %.2f SEK", "Subtotal", subTotal));
+
         if (discount > 0) {
             IO.println(String.format("%-10s : %.2f SEK", "Discount", -discount));
         }

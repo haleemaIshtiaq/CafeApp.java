@@ -32,21 +32,6 @@ public class Main {
 
 
     public void takeOrder(Order order) {
-        int itemNumber = readInteger("Enter item number (1-5): ");
-        while (itemNumber < 0 || itemNumber > 5) {
-            IO.println("This number is not in the list");
-            itemNumber = readInteger("Enter item number (1-5): ");
-        }
-        int quantity = readInteger("How many? ");
-        while (quantity <= 0) {
-            IO.println("Quantity must be greater than zero. Try again");
-            quantity = readInteger("How many? ");
-        }
-
-        order.name = name;
-        order.itemName = items[itemNumber - 1];
-        order.unitPrice = price[itemNumber - 1];
-        order.quantity = quantity;
 
         String loyalty = IO.readln("Loyalty member? (yes/no): ");
         while (!(loyalty.equalsIgnoreCase("yes")) && !(loyalty.equalsIgnoreCase("no"))) {
@@ -54,6 +39,31 @@ public class Main {
             loyalty = IO.readln("Loyalty member? (yes/no): ");
         }
         order.loyalty = loyalty;
+        while (true) {
+            int itemNumber = readInteger("Enter item number (1-5, or 0 to finish): ");
+
+
+        while (itemNumber < 0 || itemNumber > 5) {
+            IO.println("This number is not in the list");
+            itemNumber = readInteger("Enter item number (1-5, or 0 to finish): ");
+        }
+            if (itemNumber == 0) {
+                break;
+            }
+        int quantity = readInteger("How many? ");
+        while (quantity <= 0) {
+            IO.println("Quantity must be greater than zero. Try again");
+            quantity = readInteger("How many? ");
+        }
+
+        order.name = name;
+        LineItem item = new LineItem();
+        item.itemName = items[itemNumber - 1];
+        item.unitPrice = price[itemNumber - 1];
+        item.quantity = quantity;
+        order.addItem(item);
+        IO.println(item.itemName + " added.");
+    }
     }
 
 
