@@ -6,7 +6,6 @@ public class Main {
 
     String[] items = {"Espresso", "Cappuccino", "Latte", "Croissant", "Sandwich"};
     double[] price = {25.0, 35.0, 40.0, 30.0, 55.0};
-
     String name;
 
     public static String greetCustomer() {
@@ -32,34 +31,31 @@ public class Main {
     }
 
 
-    public double takeOrder(String name) {
+    public void takeOrder(Order order) {
         int itemNumber = readInteger("Enter item number (1-5): ");
         while (itemNumber < 0 || itemNumber > 5) {
             IO.println("This number is not in the list");
             itemNumber = readInteger("Enter item number (1-5): ");
         }
-        // else {
         int quantity = readInteger("How many? ");
         while (quantity <= 0) {
             IO.println("Quantity must be greater than zero. Try again");
             quantity = readInteger("How many? ");
         }
-        //else {
-        double unitPrice = price[itemNumber - 1];
-        double subTotal = unitPrice * quantity;
-        //IO.println("Subtotal: " +subTotal +" SEK");
+
+        order.name = name;
+        order.itemName = items[itemNumber - 1];
+        order.unitPrice = price[itemNumber - 1];
+        order.quantity = quantity;
+
         String loyalty = IO.readln("Loyalty member? (yes/no): ");
         while (!(loyalty.equalsIgnoreCase("yes")) && !(loyalty.equalsIgnoreCase("no"))) {
             IO.println("Invalid Input ! Kindly enter yes or no");
             loyalty = IO.readln("Loyalty member? (yes/no): ");
         }
-        double discount = calculateDiscount(subTotal, loyalty);
-        double vat = calculateVAT(subTotal, discount);
-        double total = subTotal - discount + vat;
-        printReceipt(name, items[itemNumber - 1], quantity, subTotal, discount, vat, total);
-        return total;
-
+        order.loyalty = loyalty;
     }
+
 
     public int readInteger(String message) {
         while (true) {
@@ -73,44 +69,6 @@ public class Main {
     }
 
 
-    public double calculateDiscount(double subTotal, String loyalty) {
-        if (loyalty.equalsIgnoreCase("yes")) {
-            return subTotal * 0.15;
-        } else if (subTotal > 150) {
-            return subTotal * 0.10;
-        } else {
-            return 0;
-        }
-    }
-
-
-    public double calculateVAT(double subTotal, double discount) {
-        double afterDiscount = subTotal - discount;
-        return afterDiscount * 0.12;
-    }
-
-
-    public void printReceipt(String name, String itemName, int quantity, double subtotal, double discount, double vat, double total) {
-        IO.println("================================");
-        IO.println("        Lexicon Cafe");
-        IO.println("================================");
-        IO.println(String.format("%-10s : %s", "Customer", name));
-        IO.println(String.format("%-10s : %s x %d", "Item", itemName, quantity));
-        IO.println(String.format("%-10s : %.2f SEK", "Subtotal", subtotal));
-        if (discount > 0) {
-            IO.println(String.format("%-10s : %.2f SEK", "Discount", -discount));
-        }
-        IO.println(String.format("%-10s : %.2f SEK", "VAT", vat));
-
-
-        IO.println("--------------------------------");
-        IO.println(String.format("%-10s : %.2f SEK", "TOTAL", total));
-        IO.println("================================");
-        IO.println("   Thank you, " + name + "!");
-        IO.println("   See you next time.");
-        IO.println("================================");
-    }
-
     public void multipleCustomers(double firstCustomerBill) {
         int customersServed = 1;
         double totalRevenue = firstCustomerBill;
@@ -121,7 +79,15 @@ public class Main {
             }
             IO.println("Hi " + name + " ! Here is our menu:");
             showMenu();
-            double customerBill = takeOrder(name);
+            Order order = new Order();
+            order.name = name;
+            takeOrder(order);
+            order.calculateSubTotal();
+            order.calculateDiscount();
+            order.calculateVAT();
+            order.calculateTotal();
+            order.printReceipt();
+            double customerBill = order.total;
             totalRevenue = totalRevenue + customerBill;
             customersServed++;
         }
@@ -141,7 +107,18 @@ public class Main {
     void main() {
         name = Main.greetCustomer();
         showMenu();
-     double firstCustomerBill = takeOrder(name);
+
+        Order order = new Order();
+        order.name=name;
+      takeOrder(order);
+
+        order.calculateSubTotal();
+        order.calculateDiscount();
+        order.calculateVAT();
+        order.calculateTotal();
+        order.printReceipt();
+
+        double firstCustomerBill = order.total;
      multipleCustomers(firstCustomerBill);
     }
 }
